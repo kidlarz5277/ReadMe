@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="icon" type="image/x-icon" href="./asset/favicon.ico">
+    <title>Browse Comic</title>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="./asset/Bangers.png" alt="ReadMe Logo">
+            <h1>ReadMe <span>DIGITAL COMIC BOOKSTORE</span></h1>
+        </div>
+        <div class="icons">
+            <i class="fas fa-cog" onclick="window.location.href='settings.html'"></i>
+            <i class="fas fa-user-circle"></i>
+            <div id="user-menu" style="display: none;">
+                <button class="menu-button" onclick="window.location.href='bookshelf.html'">My Bookshelf</button>
+                <button class="menu-button" onclick="window.location.href='orderhistory.html'">Order History</button>
+                <button class="menu-button" onclick="window.location.href='index.php'">Log Out</button>
+            </div>
+            <i class="fas fa-shopping-cart" onclick="window.location.href='cart.html'"></i>
+        </div>
+    </header>
+    <div class="navigator">
+        <nav>
+            <a class="first" href="homepage.html">Home</a>
+            <a href="browse.html">Browse Comic</a>
+            <a class="selected" href="feedback.html">Feedback</a>
+            <input class="search-box" type="text" placeholder="Search">
+            <button id="search"><i class="fas fa-search"></i></button>
+        </nav>    
+    </div>
+
+    <main>
+        <h2>Feedback</h2>
+        <div class="feedback">
+            <form method="post" action="feed.php">
+                <label class="fed" for="name">Name</label>
+                <input class="feed" type="text" id="name" name="name" required>
+                
+                <label class="fed" for="email">Email Address</label>
+                <input class="feed" type="email" id="email" name="email" required>
+                
+                <label class="fed" for="message">Message</label>
+                <textarea class="feed" name="message" rows="5" required></textarea>
+                
+                <button id="submit" type="submit">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    initUserMenu();
+});
+
+function initUserMenu() {
+    const userIcon = document.querySelector(".fa-user-circle");
+    const userMenu = document.getElementById("user-menu");
+
+    if (userIcon && userMenu) {
+        userIcon.addEventListener("click", () => {
+            userMenu.style.display = userMenu.style.display === "none" ? "block" : "none";
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!userIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.style.display = "none";
+            }
+        });
+    }
+}
+    </script>
+</body>
+</html>

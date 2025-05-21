@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="icon" type="image/x-icon" href="./asset/favicon.ico">
+    <title>Home</title>
+</head>
+<style>
+    .carousel {
+    display: flex;
+    background: #dfefff;
+    border-radius: 10px;
+}
+    /* Add inside your existing CSS or merge carefully */
+.latest-update .comics {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 0.5em 0;
+}
+
+/* New wrapper for sliding effect created by JS */
+.latest-update .carousel-track {
+    display: flex;
+    gap: 1em;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Each comic item inside latest carousel */
+.latest-update .comic {
+    flex: 0 0 auto;
+    width: 150px;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 1.2em;
+}
+
+.latest-update .comic img {
+    width: 120px;
+    height: 180px;
+    object-fit: cover;
+    border: 1px solid #000;
+    border-radius: 4px;
+    margin-bottom: 0.5em;
+    border: 1.5px solid black;
+}
+
+/* Carousel arrow buttons */
+.latest-update .arrow {
+    background: #ffc857;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    padding: 0.5em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.latest-update .arrow:hover {
+    background: #ffb300;
+    transform: scale(1.1);
+}
+
+</style>
+<body>
+    <header>
+        <div class="logo">
+            <img src="./asset/Bangers.png" alt="ReadMe Logo">
+            <h1>ReadMe <span>DIGITAL COMIC BOOKSTORE</span></h1>
+        </div>
+        <div class="icons">
+            <i class="fas fa-cog" onclick="window.location.href='settings.html'"></i>
+            <i class="fas fa-user-circle"></i>
+            <div id="user-menu" style="display: none;">
+                <button class="menu-button" onclick="window.location.href='bookshelf.html'">My Bookshelf</button>
+                <button class="menu-button" onclick="window.location.href='orderhistory.html'">Order History</button>
+                <button class="menu-button" onclick="window.location.href='index.php'">Log Out</button>
+            </div>
+            <i class="fas fa-shopping-cart" onclick="window.location.href='cart.html'"></i>
+        </div>
+    </header>
+    <div class="navigator">
+        <nav>
+            <a class="first" href="homepage.html">Home</a>
+            <a href="browse.html">Browse Comic</a>
+            <a href="feedback.html">Feedback</a>
+            <input class="search-box" type="text" placeholder="Search">
+            <button id="search"><i class="fas fa-search"></i></button>
+        </nav>    
+    </div>
+
+    <main>
+        <section class="latest-update">
+            <h2>Latest Comics</h2>
+            <div class="carousel">
+                <button class="arrow left"><i class="fas fa-chevron-left"></i></button>
+                <div class="comics">
+                    
+                </div>
+                <button class="arrow right"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+     
+    </main>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const comicsContainer = document.querySelector(".comics");
+
+    // Fetch latest comics data
+    fetch("latest_comics.php")
+        .then(res => res.json())
+        .then(data => {
+            if (!Array.isArray(data)) {
+                console.error("Invalid comics data:", data);
+                return;
+            }
+
+            // Create carousel track
+            const track = document.createElement("div");
+            track.classList.add("carousel-track");
+
+            data.forEach(comic => {
+                const comicDiv = document.createElement("div");
+                comicDiv.classList.add("comic");
+
+                const coverUrl = comic.cover_url || "assets/default_cover.jpg";
+
+                comicDiv.innerHTML = `
+                    <a href="comicdetails.html?id=${comic.id}">
+                        <img src="${coverUrl}" alt="${comic.title}">
+                    </a>
+                    <p>${comic.title}</p>
+                `;
+
+                track.appendChild(comicDiv);
+            });
+
+            comicsContainer.appendChild(track);
+            initCarousel(track, 3); // Initialize carousel with 3 visible items
+        })
+        .catch(err => {
+            console.error("Error fetching comics:", err);
+        });
+
+    // ✅ Initialize user menu toggle
+    initUserMenu();
+});
+
+// === Carousel Slide Function ===
+function initCarousel(track, slideCount) {
+    let index = 0;
+    const comicItems = track.children;
+    if (comicItems.length === 0) return;
+
+    const itemWidth = comicItems[0].offsetWidth + 16; // includes gap
+    const maxIndex = Math.max(0, comicItems.length - slideCount);
+
+    const updateSlide = () => {
+        track.style.transform = `translateX(-${index * itemWidth}px)`;
+    };
+
+    document.querySelector(".latest-update .arrow.left")?.addEventListener("click", () => {
+        index = Math.max(index - slideCount, 0);
+        updateSlide();
+    });
+
+    document.querySelector(".latest-update .arrow.right")?.addEventListener("click", () => {
+        index = Math.min(index + slideCount, maxIndex);
+        updateSlide();
+    });
+}
+
+// === User Menu Toggle Function ===
+function initUserMenu() {
+    const userIcon = document.querySelector(".fa-user-circle");
+    const userMenu = document.getElementById("user-menu");
+
+    if (userIcon && userMenu) {
+        userIcon.addEventListener("click", (event) => {
+            event.stopPropagation(); // Prevent it from triggering the document click
+            userMenu.style.display = userMenu.style.display === "none" ? "block" : "none";
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!userMenu.contains(event.target)) {
+                userMenu.style.display = "none";
+            }
+        });
+    }
+}
+</script>
+
+    
+</body>
+</html>
